@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Youtube, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Reddit } from 'lucide-react';
 
 const SupportedPlatforms = () => {
   const platforms = [
@@ -31,6 +32,10 @@ const SupportedPlatforms = () => {
     { 
       name: "Vimeo", 
       icon: <span className="text-cyan-600 mr-2">V</span>
+    },
+    { 
+      name: "Reddit", 
+      icon: <span className="text-orange-500 mr-2"><Reddit size={20} /></span>
     }
   ];
 
