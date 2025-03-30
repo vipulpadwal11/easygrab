@@ -22,9 +22,8 @@ import {
 
 interface MediaInfo {
   title: string;
-  thumbnail: string;
-  type: 'video' | 'image' | 'audio';
   platform: string;
+  type: 'video' | 'image' | 'audio';
 }
 
 type DownloadFormat = 'auto' | 'audio' | 'mute';
@@ -63,26 +62,21 @@ const MediaDownloader: React.FC = () => {
 
       // Mock detection of platforms
       let platform = '';
-      let thumbnailUrl = '';
       
       if (url.includes('youtube') || url.includes('youtu.be')) {
         platform = 'YouTube';
-        thumbnailUrl = 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8eW91dHViZXxlbnwwfHwwfHx8MA%3D%3D';
       } else if (url.includes('instagram')) {
         platform = 'Instagram';
-        thumbnailUrl = 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aW5zdGFncmFtfGVufDB8fDB8fHww';
       } else if (url.includes('tiktok')) {
         platform = 'TikTok';
-        thumbnailUrl = 'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGlrdG9rfGVufDB8fDB8fHww';
       } else if (url.includes('facebook') || url.includes('fb.com')) {
         platform = 'Facebook';
-        thumbnailUrl = 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmFjZWJvb2t8ZW58MHx8MHx8fDA%3D';
       } else if (url.includes('twitter') || url.includes('x.com')) {
         platform = 'Twitter';
-        thumbnailUrl = 'https://images.unsplash.com/photo-1611605698323-b1e99cfd37ea?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dHdpdHRlcnxlbnwwfHwwfHx8MA%3D%3D';
       } else if (url.includes('vimeo')) {
         platform = 'Vimeo';
-        thumbnailUrl = 'https://images.unsplash.com/photo-1627843240167-b2a5cc08d9a4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dmltZW98ZW58MHx8MHx8fDA%3D';
+      } else if (url.includes('pinterest')) {
+        platform = 'Pinterest';
       } else {
         setShowErrorDialog(true);
         throw new Error('Unsupported platform');
@@ -90,9 +84,8 @@ const MediaDownloader: React.FC = () => {
 
       // Mock media info based on URL
       const mockMediaInfo: MediaInfo = {
-        title: `Sample ${platform} Media`,
-        thumbnail: thumbnailUrl,
-        type: platform === 'Instagram' ? 'image' : 'video',
+        title: `Media from ${platform}`,
+        type: platform === 'Instagram' || platform === 'Pinterest' ? 'image' : 'video',
         platform
       };
       
@@ -101,7 +94,6 @@ const MediaDownloader: React.FC = () => {
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-      // We're now using the dialog instead of toast for errors
     } finally {
       setLoading(false);
     }
@@ -214,103 +206,94 @@ const MediaDownloader: React.FC = () => {
               )}
             </div>
             
-            {/* Media Preview */}
+            {/* Media Info */}
             {mediaInfo && !loading && (
               <div className="border border-black/10 rounded-lg p-4 mb-6 animate-fade-in">
-                <div className="flex flex-col md:flex-row gap-4 items-start">
-                  <div className="w-full md:w-1/3">
-                    <img 
-                      src={mediaInfo.thumbnail} 
-                      alt={mediaInfo.title}
-                      className="w-full h-auto rounded-md object-cover aspect-video"
-                    />
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-lg">{mediaInfo.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Platform: <span className="font-medium">{mediaInfo.platform}</span>
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Type: <span className="font-medium capitalize">{mediaInfo.type}</span>
+                      </p>
+                    </div>
+                    <button 
+                      onClick={resetForm}
+                      className="text-gray-500 hover:text-black transition-colors"
+                      aria-label="Reset"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold text-lg">{mediaInfo.title}</h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Platform: <span className="font-medium">{mediaInfo.platform}</span>
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Type: <span className="font-medium capitalize">{mediaInfo.type}</span>
-                        </p>
-                      </div>
-                      <button 
-                        onClick={resetForm}
-                        className="text-gray-500 hover:text-black transition-colors"
-                        aria-label="Reset"
+                  
+                  {/* Format Selection */}
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium mb-2">
+                      Select Format
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => setSelectedFormat('auto')}
+                        className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
+                          selectedFormat === 'auto'
+                            ? 'bg-black text-pearl'
+                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        }`}
                       >
-                        <X className="h-5 w-5" />
+                        Auto (Video)
+                      </button>
+                      <button
+                        onClick={() => setSelectedFormat('audio')}
+                        className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
+                          selectedFormat === 'audio'
+                            ? 'bg-black text-pearl'
+                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        }`}
+                      >
+                        Audio Only
+                      </button>
+                      <button
+                        onClick={() => setSelectedFormat('mute')}
+                        className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
+                          selectedFormat === 'mute'
+                            ? 'bg-black text-pearl'
+                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        }`}
+                      >
+                        Muted Video
                       </button>
                     </div>
-                    
-                    {/* Format Selection */}
-                    <div className="mt-4">
-                      <label className="block text-sm font-medium mb-2">
-                        Select Format
-                      </label>
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => setSelectedFormat('auto')}
-                          className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
-                            selectedFormat === 'auto'
-                              ? 'bg-black text-pearl'
-                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                          }`}
-                        >
-                          Auto (Video)
-                        </button>
-                        <button
-                          onClick={() => setSelectedFormat('audio')}
-                          className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
-                            selectedFormat === 'audio'
-                              ? 'bg-black text-pearl'
-                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                          }`}
-                        >
-                          Audio Only
-                        </button>
-                        <button
-                          onClick={() => setSelectedFormat('mute')}
-                          className={`px-3 py-1 rounded-full text-sm transition-colors duration-200 ${
-                            selectedFormat === 'mute'
-                              ? 'bg-black text-pearl'
-                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                          }`}
-                        >
-                          Muted Video
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Download Button */}
-                    <div className="mt-6">
-                      <button
-                        onClick={downloadMedia}
-                        disabled={isDownloading || !selectedFormat}
-                        className="btn-primary w-full md:w-auto flex items-center justify-center hover:scale-105 transition-transform"
-                      >
-                        {isDownloading ? (
-                          completed ? (
-                            <>
-                              <CheckCircle className="mr-2 h-4 w-4" />
-                              Downloaded
-                            </>
-                          ) : (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Downloading...
-                            </>
-                          )
+                  </div>
+                  
+                  {/* Download Button */}
+                  <div className="mt-4">
+                    <button
+                      onClick={downloadMedia}
+                      disabled={isDownloading || !selectedFormat}
+                      className="btn-primary w-full md:w-auto flex items-center justify-center hover:scale-105 transition-transform"
+                    >
+                      {isDownloading ? (
+                        completed ? (
+                          <>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Downloaded
+                          </>
                         ) : (
                           <>
-                            <Download className="mr-2 h-4 w-4" />
-                            Download
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Downloading...
                           </>
-                        )}
-                      </button>
-                    </div>
+                        )
+                      ) : (
+                        <>
+                          <Download className="mr-2 h-4 w-4" />
+                          Download
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
                 
@@ -334,7 +317,7 @@ const MediaDownloader: React.FC = () => {
                   <Link className="h-16 w-16 mx-auto animate-pulse-opacity" />
                 </div>
                 <p className="text-gray-600">
-                  Paste any URL from YouTube, Instagram, TikTok, Facebook, Twitter, or Vimeo to download media
+                  Paste any URL from YouTube, Instagram, TikTok, Facebook, Twitter, Pinterest, or Vimeo to download media
                 </p>
               </div>
             )}

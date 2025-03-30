@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 interface DonationOption {
   amount: number;
@@ -13,6 +14,7 @@ interface DonationOption {
 const DonationButton = () => {
   const [open, setOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   const donationOptions: DonationOption[] = [
     { amount: 5, emoji: '☕', description: 'Coffee to fuel the code!' },
@@ -22,11 +24,21 @@ const DonationButton = () => {
     { amount: 100, emoji: '🎉', description: 'Drinks to celebrate features!' },
   ];
 
-  const handleDonate = async (amount: number) => {
+  const handleSelectAmount = (amount: number) => {
+    setSelectedAmount(amount);
+  };
+
+  const handleDonate = async () => {
+    if (!selectedAmount) {
+      toast.error("Please select a donation amount first");
+      return;
+    }
+    
     setProcessing(true);
     
     try {
       // In a real app, this would call a Stripe API
+      // Example: Redirect to Stripe checkout
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setOpen(false);
@@ -35,6 +47,7 @@ const DonationButton = () => {
       toast.error("Something went wrong with your donation. Please try again.");
     } finally {
       setProcessing(false);
+      setSelectedAmount(null);
     }
   };
 
@@ -62,9 +75,13 @@ const DonationButton = () => {
             {donationOptions.map((option) => (
               <button
                 key={option.amount}
-                onClick={() => handleDonate(option.amount)}
+                onClick={() => handleSelectAmount(option.amount)}
                 disabled={processing}
-                className="flex items-center justify-between p-4 border border-black/10 rounded-lg hover:bg-black/5 transition-colors disabled:opacity-50"
+                className={`flex items-center justify-between p-4 border rounded-lg transition-colors disabled:opacity-50 ${
+                  selectedAmount === option.amount 
+                    ? 'border-black bg-black/5' 
+                    : 'border-black/10 hover:bg-black/5'
+                }`}
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">{option.emoji}</span>
@@ -73,6 +90,16 @@ const DonationButton = () => {
                 <span className="text-sm text-gray-600">{option.description}</span>
               </button>
             ))}
+          </div>
+          
+          <div className="flex justify-center mt-2">
+            <Button 
+              onClick={handleDonate}
+              disabled={processing || !selectedAmount}
+              className="w-full btn-primary hover:scale-105 transition-transform"
+            >
+              Support
+            </Button>
           </div>
           
           <div className="text-center text-sm text-gray-500 mt-2">
