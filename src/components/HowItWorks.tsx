@@ -27,8 +27,12 @@ const HowItWorks = () => {
         <h2 className="text-3xl font-bold mb-12 text-center">How It Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
-            <div key={index} className="flex flex-col items-center text-center p-6 border border-pearl/20 rounded-lg">
-              <div className="mb-4">{step.icon}</div>
+            <div 
+              key={index} 
+              className="flex flex-col items-center text-center p-6 border border-pearl/20 rounded-lg hover:border-pearl/40 transition-all duration-300 hover:translate-y-[-5px]"
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              <div className="mb-4 transform transition-transform duration-300 hover:scale-110">{step.icon}</div>
               <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
               <p>{step.description}</p>
             </div>

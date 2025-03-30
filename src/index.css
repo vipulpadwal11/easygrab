@@ -58,14 +58,47 @@
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-black text-pearl rounded-md hover:opacity-90 transition-opacity;
+    @apply px-4 py-2 bg-black text-pearl rounded-md hover:opacity-90 transition-all duration-200;
   }
   
   .btn-outline {
-    @apply px-4 py-2 border border-black text-black rounded-md hover:bg-black hover:text-pearl transition-all;
+    @apply px-4 py-2 border border-black text-black rounded-md hover:bg-black hover:text-pearl transition-all duration-200;
   }
   
   .input-primary {
-    @apply w-full px-4 py-3 bg-pearl border border-black/20 rounded-md focus:outline-none focus:ring-2 focus:ring-black/10 transition-all;
+    @apply w-full px-4 py-3 bg-pearl border border-black/20 rounded-md focus:outline-none focus:ring-2 focus:ring-black/10 transition-all duration-200;
   }
+}
+
+@layer utilities {
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }

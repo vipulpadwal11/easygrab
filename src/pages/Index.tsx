@@ -2,9 +2,9 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import HowItWorks from '@/components/HowItWorks';
-import SupportedPlatforms from '@/components/SupportedPlatforms';
 import MediaDownloader from '@/components/MediaDownloader';
+import SupportedPlatforms from '@/components/SupportedPlatforms';
+import HowItWorks from '@/components/HowItWorks';
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -13,9 +13,9 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
-        <HowItWorks />
-        <SupportedPlatforms />
         <MediaDownloader />
+        <SupportedPlatforms />
+        <HowItWorks />
       </main>
       <Footer />
     </div>
