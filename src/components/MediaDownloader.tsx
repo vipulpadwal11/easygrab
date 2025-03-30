@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Download, Link, Loader2, CheckCircle, X, AlertCircle } from 'lucide-react';
+import { Download, Link, Loader2, CheckCircle, X, AlertCircle, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -11,6 +11,14 @@ import {
   AlertDialogTitle,
   AlertDialogDescription
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose
+} from '@/components/ui/dialog';
 
 interface MediaInfo {
   title: string;
@@ -31,6 +39,7 @@ const MediaDownloader: React.FC = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [showInfoDialog, setShowInfoDialog] = useState(false);
 
   // Function to simulate fetching media info
   const fetchMediaInfo = async (url: string) => {
@@ -54,18 +63,26 @@ const MediaDownloader: React.FC = () => {
 
       // Mock detection of platforms
       let platform = '';
+      let thumbnailUrl = '';
+      
       if (url.includes('youtube') || url.includes('youtu.be')) {
         platform = 'YouTube';
+        thumbnailUrl = 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8eW91dHViZXxlbnwwfHwwfHx8MA%3D%3D';
       } else if (url.includes('instagram')) {
         platform = 'Instagram';
+        thumbnailUrl = 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aW5zdGFncmFtfGVufDB8fDB8fHww';
       } else if (url.includes('tiktok')) {
         platform = 'TikTok';
+        thumbnailUrl = 'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGlrdG9rfGVufDB8fDB8fHww';
       } else if (url.includes('facebook') || url.includes('fb.com')) {
         platform = 'Facebook';
+        thumbnailUrl = 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmFjZWJvb2t8ZW58MHx8MHx8fDA%3D';
       } else if (url.includes('twitter') || url.includes('x.com')) {
         platform = 'Twitter';
+        thumbnailUrl = 'https://images.unsplash.com/photo-1611605698323-b1e99cfd37ea?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dHdpdHRlcnxlbnwwfHwwfHx8MA%3D%3D';
       } else if (url.includes('vimeo')) {
         platform = 'Vimeo';
+        thumbnailUrl = 'https://images.unsplash.com/photo-1627843240167-b2a5cc08d9a4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dmltZW98ZW58MHx8MHx8fDA%3D';
       } else {
         setShowErrorDialog(true);
         throw new Error('Unsupported platform');
@@ -74,7 +91,7 @@ const MediaDownloader: React.FC = () => {
       // Mock media info based on URL
       const mockMediaInfo: MediaInfo = {
         title: `Sample ${platform} Media`,
-        thumbnail: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8eW91dHViZXxlbnwwfHwwfHx8MA%3D%3D',
+        thumbnail: thumbnailUrl,
         type: platform === 'Instagram' ? 'image' : 'video',
         platform
       };
@@ -142,10 +159,19 @@ const MediaDownloader: React.FC = () => {
       <div className="container mx-auto max-w-4xl">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-black/10 hover:shadow-xl transition-shadow duration-300">
           <div className="p-6 md:p-8">
-            <h2 className="text-2xl font-bold mb-6 flex items-center">
-              <Download className="mr-2 h-6 w-6" />
-              Media Downloader
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold flex items-center">
+                <Download className="mr-2 h-6 w-6" />
+                Media Downloader
+              </h2>
+              <button 
+                onClick={() => setShowInfoDialog(true)}
+                className="text-gray-500 hover:text-black transition-colors"
+                aria-label="Information"
+              >
+                <Info className="h-5 w-5" />
+              </button>
+            </div>
             
             {/* URL Input */}
             <div className="mb-6">
@@ -338,6 +364,38 @@ const MediaDownloader: React.FC = () => {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Info Dialog - For explaining the download functionality */}
+      <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>About Media Downloads</DialogTitle>
+            <DialogDescription>
+              <div className="mt-4 space-y-4">
+                <p>
+                  <strong>Note:</strong> This is a demo version of EasyGrab. In a production environment, this would connect to a backend service that would handle the actual media downloads.
+                </p>
+                <div>
+                  <h4 className="font-medium mb-2">How it would work in production:</h4>
+                  <ol className="list-decimal pl-5 space-y-2">
+                    <li>The URL would be sent to a backend service (like Cloudflare Workers)</li>
+                    <li>The service would extract the media using tools like yt-dlp</li>
+                    <li>The extracted media would be served back to the browser for download</li>
+                  </ol>
+                </div>
+                <p>
+                  For this demo, downloads are simulated and no actual files are downloaded to your device.
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <DialogClose className="btn-primary hover:scale-105 transition-transform">
+              Got it
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

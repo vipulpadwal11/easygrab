@@ -4,7 +4,7 @@ import { ArrowDown } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section className="py-16 md:py-24 px-4 md:px-8 flex flex-col items-center text-center">
+    <section className="py-16 md:py-20 px-4 md:px-8 flex flex-col items-center text-center">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">Download Media from Any Platform</h1>
       <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8 animate-fade-in animation-delay-100">
         EasyGrab simplifies downloading images, videos, and audio from platforms like YouTube, Instagram, TikTok, and more. Just paste the URL and download!

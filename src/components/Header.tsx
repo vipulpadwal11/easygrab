@@ -1,14 +1,11 @@
 
 import React from 'react';
-import { Download } from 'lucide-react';
+import Logo from './Logo';
 
 const Header = () => {
   return (
     <header className="w-full py-6 px-4 md:px-8 flex justify-between items-center border-b border-black/10 animate-fade-in">
-      <div className="flex items-center">
-        <Download className="h-6 w-6 mr-2 hover:scale-110 transition-transform duration-300" />
-        <h1 className="text-xl font-bold">EasyGrab</h1>
-      </div>
+      <Logo />
       <nav>
         <ul className="flex space-x-6">
           <li className="hidden md:block hover:underline transition-all">
