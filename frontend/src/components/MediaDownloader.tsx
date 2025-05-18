@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Download, Link, Loader2, CheckCircle, X, AlertCircle, Info } from 'lucide-react';
 import { toast } from 'sonner';
@@ -17,7 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogClose
+  DialogClose, 
+  
 } from '@/components/ui/dialog';
 
 interface MediaInfo {
@@ -110,71 +110,43 @@ const MediaDownloader: React.FC = () => {
   // Function to actually download media
   const downloadMedia = async () => {
     if (!mediaInfo) return;
-    
     setIsDownloading(true);
     setProgress(0);
-    
+  
     try {
-      // Determine what to fetch based on format
-      const formatQueryParam = selectedFormat === 'auto' ? 'video' : selectedFormat;
-      
-      // In a real app, this would be the endpoint that processes and returns media
-      const downloadUrl = `https://cors-anywhere.herokuapp.com/${url}?format=${formatQueryParam}`;
-      
-      // Simulate a download progress
-      const progressInterval = setInterval(() => {
-        setProgress(prevProgress => {
-          const newProgress = prevProgress + Math.random() * 15;
-          return newProgress >= 100 ? 100 : newProgress;
-        });
-      }, 500);
-      
-      // In a real app with a backend API, you would use this:
-      // const response = await fetch(`https://your-backend-api.com/download-media`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ url, format: selectedFormat })
-      // });
-      
-      // For now, we'll use a direct download approach that works with CORS-friendly sites
-      // Note: This won't work with most social media platforms due to CORS restrictions
-      // That's why a backend proxy service is typically needed
-      
-      // Simulate download completion
-      setTimeout(async () => {
-        clearInterval(progressInterval);
-        setProgress(100);
-        
-        try {
-          // Create a temporary anchor element to trigger download
-          // For demonstration purposes - in reality, this would come from your backend
-          const a = document.createElement('a');
-          a.href = url;
-          // Extract filename from URL or use platform + format
-          const fileName = `${mediaInfo.platform}_media.${selectedFormat === 'audio' ? 'mp3' : 'mp4'}`;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          
-          setCompleted(true);
-          toast.success(`Download completed!`);
-        } catch (error) {
-          console.error('Download error:', error);
-          toast.error('Could not complete download. Try a different URL or format.');
-        }
-        
-        setTimeout(() => {
-          setIsDownloading(false);
-        }, 1000);
-      }, 3000);
-      
+      const response = await fetch('http://localhost:5000/api/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, format: selectedFormat }),
+      });
+  
+      if (!response.ok) throw new Error('Download failed');
+  
+      // Get filename from Content-Disposition header
+      const disposition = response.headers.get('Content-Disposition');
+      const match = disposition && disposition.match(/filename="(.+)"/);
+      const filename = match ? match[1] : 'media-download';
+  
+      // Download as blob
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+  
+      setProgress(100);
+      setCompleted(true);
+      toast.success('Download completed!');
     } catch (error) {
-      console.error('Download error:', error);
       toast.error('Download failed. Please try again.');
+    } finally {
       setIsDownloading(false);
     }
-  };
+  };  
 
   // Reset the form
   const resetForm = () => {

@@ -125,3 +125,8 @@ export {
   ToastClose,
   ToastAction,
 }
+// frontend/src/components/ui/toaster.tsx
+export function toast(message: string) {
+  alert(message);
+}
+export default { toast };

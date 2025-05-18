@@ -27,3 +27,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
 }
 
 export { Toaster }
+
+// frontend/src/components/ui/sonner.tsx
+export function sonner(message: string) {
+  alert(message);
+}
+export default { sonner };
